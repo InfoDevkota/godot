@@ -176,7 +176,9 @@ def configure(env):
         CCFLAGS="-fpic -ffunction-sections -funwind-tables -fstack-protector-strong -fvisibility=hidden -fno-strict-aliasing".split()
     )
     env.Append(CPPDEFINES=["NO_STATVFS", "GLES_ENABLED"])
-    env.Append(CPPDEFINES=[("_FILE_OFFSET_BITS", 64)])
+    # Only enable large file support on API 24+, as fseeko is not available on older versions
+    if get_min_sdk_version(env["ndk_platform"]) >= 24:
+        env.Append(CPPDEFINES=[("_FILE_OFFSET_BITS", 64)])
 
     env["neon_enabled"] = False
     if env["android_arch"] == "x86":
